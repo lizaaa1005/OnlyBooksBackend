@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -14,10 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Buch {
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String titel;
     private String autor;
+    private Double preis;
     private String sprache;
     private String genre;
     @Enumerated(EnumType.STRING)
@@ -25,9 +25,11 @@ public class Buch {
     private int seitenanzahl;
     private int veroeffentlichungsjahr;
     private String verlag;
+    private String username;
     private String isbn;
     private String beschreibung;
+    private boolean zumVerkauf;
+    private boolean zumTausch;
     private boolean ab18;
-    private Double preis;
     private List<String> tags;
 }

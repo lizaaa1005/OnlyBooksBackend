@@ -2,11 +2,12 @@ package bs.lf10.repository;
 
 import bs.lf10.entity.Benutzer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
-public interface BenutzerRepository extends JpaRepository<Benutzer, UUID> {
-    Optional<Benutzer> findByEmail(String email);
+@Repository
+public interface BenutzerRepository extends JpaRepository<Benutzer, Long> {
+//    Optional<Benutzer> findByEmail(String email);
     Optional<Benutzer> findByUsername(String username);
 }

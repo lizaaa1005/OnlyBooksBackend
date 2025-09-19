@@ -1,24 +1,37 @@
 package bs.lf10.controller;
 
 import bs.lf10.entity.Benutzer;
-import bs.lf10.repository.BenutzerRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import bs.lf10.service.BenutzerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class BenutzerController {
 
-    private final BenutzerRepository benutzerRepository;
+    private final BenutzerService benutzerService;
 
-    public BenutzerController(BenutzerRepository benutzerRepository) {
-        this.benutzerRepository = benutzerRepository;
+    @PostMapping("/registrieren")
+    public ResponseEntity<Benutzer> registrieren(@RequestBody Benutzer benutzer) {
+        try {
+            Benutzer neuerBenutzer = benutzerService.benutzerRegistrieren(benutzer);
+            return new ResponseEntity<>(neuerBenutzer, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PostMapping("/register")
-    public Benutzer register(@RequestBody Benutzer benutzer) {
-        return benutzerRepository.save(benutzer);
+    @PostMapping("/einloggen")
+    public ResponseEntity<Benutzer> einloggen(@RequestBody Benutzer benutzer) {
+        try {
+            Benutzer eingeloggterBenutzer = benutzerService.benutzerEinloggen(benutzer.getUsername(), benutzer.getPassword());
+            return new ResponseEntity<>(eingeloggterBenutzer, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
     }
 }
