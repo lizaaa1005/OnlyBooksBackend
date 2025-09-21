@@ -12,11 +12,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 
     private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @PostMapping
     public ResponseEntity<Book> uploadBook(

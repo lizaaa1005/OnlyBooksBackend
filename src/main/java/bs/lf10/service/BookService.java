@@ -13,9 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
+
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     public Book saveBook(Book book, MultipartFile coverImage, MultipartFile spineImage, List<MultipartFile> additionalImages) throws IOException {
 
