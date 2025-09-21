@@ -1,6 +1,6 @@
 package bs.lf10.entity;
 
-public enum Zustand {
+public enum BookCondition {
     WIE_NEU("Wie neu"),
     LEICHTE_GEBRAUCHSSPUREN("Leichte Gebrauchsspuren"),
     GEBRAUCHT("Gebraucht"),
@@ -8,7 +8,7 @@ public enum Zustand {
 
     private final String label;
 
-    Zustand(String label) {
+    BookCondition(String label) {
         this.label = label;
     }
 
