@@ -1,5 +1,3 @@
-
-Du:
 package bs.lf10.service;
 
 import bs.lf10.entity.Book;
@@ -121,4 +119,5 @@ class BookServiceTest {
 
         assertTrue(result.isEmpty());
     }
+
 }
