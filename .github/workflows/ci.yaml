@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Cache Maven local repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run unit tests (Maven surefire)
+        run: mvn -B -DskipTests=false test
+
+      - name: Run integration tests (Maven Failsafe / verify)
+        # This runs the 'integration' phase (verify). If your project uses the
+        # Maven Failsafe plugin, integration tests will run here. If your
+        # project doesn't define Failsafe, this step will still run 'verify'
+        # but may not execute any dedicated integration tests.
+        run: mvn -B verify
+
+      - name: Static analysis — Checkstyle
+        # Invokes the Maven Checkstyle plugin. If you have a checkstyle
+        # configuration in the repo (recommended), it will be used. Otherwise
+        # the plugin will run with default rules and may fail or warn.
+        run: mvn -B org.apache.maven.plugins:maven-checkstyle-plugin:3.1.2:check || true
+
+      - name: Static analysis — SpotBugs
+        # Run SpotBugs checks. This will download plugin if not present.
+        run: mvn -B com.github.spotbugs:spotbugs-maven-plugin:4.7.3:check || true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/**
+            target/failsafe-reports/**
+
+      - name: Archive maven logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-logs
+          path: build.log
+          # If you want, you can write mvn logs to build.log in an earlier step.
