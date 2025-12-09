@@ -29,34 +29,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      # ------------------------------
+      # Maven Build / Tests / Analysis
+      # ------------------------------
       - name: Run unit tests (Maven surefire)
-        run: mvn -B -DskipTests=false test
+        run: mvn -B -DskipTests=false test 2>&1 | tee -a build.log
 
       - name: Run integration tests (Maven Failsafe / verify)
-        # This runs the 'integration' phase (verify). If your project uses the
-        # Maven Failsafe plugin, integration tests will run here. If your
-        # project doesn't define Failsafe, this step will still run 'verify'
-        # but may not execute any dedicated integration tests.
-        run: mvn -B verify
+        run: mvn -B verify 2>&1 | tee -a build.log
 
       - name: Static analysis — Checkstyle
-        # Invokes the Maven Checkstyle plugin. If you have a checkstyle
-        # configuration in the repo (recommended), it will be used. Otherwise
-        # the plugin will run with default rules and may fail or warn.
-        run: mvn -B org.apache.maven.plugins:maven-checkstyle-plugin:3.1.2:check || true
+        run: mvn -B org.apache.maven.plugins:maven-checkstyle-plugin:3.1.2:check 2>&1 | tee -a build.log || true
 
       - name: Static analysis — SpotBugs
-        # Run SpotBugs checks. This will download plugin if not present.
-        run: mvn -B com.github.spotbugs:spotbugs-maven-plugin:4.7.3:check || true
+        run: mvn -B com.github.spotbugs:spotbugs-maven-plugin:4.7.3:check 2>&1 | tee -a build.log || true
 
+      # ------------------------------
+      # Upload Artifacts
+      # ------------------------------
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: |
-            target/surefire-reports/**
-            target/failsafe-reports/**
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**
 
       - name: Archive maven logs
         if: failure()
@@ -64,4 +62,3 @@ jobs:
         with:
           name: maven-logs
           path: build.log
-          # If you want, you can write mvn logs to build.log in an earlier step.
