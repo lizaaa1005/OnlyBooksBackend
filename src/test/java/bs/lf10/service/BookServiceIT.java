@@ -2,6 +2,7 @@ package bs.lf10.service;
 
 import bs.lf10.entity.Book;
 import bs.lf10.repository.BookRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test") // <- nutzt H2-Datenbank
+@ActiveProfiles("test")
 class BookServiceIT {
 
     @Autowired
@@ -26,43 +27,49 @@ class BookServiceIT {
     @Autowired
     private BookRepository bookRepository;
 
+    @BeforeEach
+    void cleanDatabase() {
+        bookRepository.deleteAll();
+    }
+
     @Test
-    void saveBook_withCoverImage_shouldSaveAndReturnBook() throws IOException {
+    void saveBook_withAllImages_shouldSaveAndReturnBook() throws IOException {
         Book book = new Book();
         book.setTitle("Integration Test Book");
 
         MockMultipartFile cover = new MockMultipartFile(
                 "coverImage", "cover.jpg", "image/jpeg", "coverData".getBytes()
         );
+        MockMultipartFile spine = new MockMultipartFile(
+                "spineImage", "spine.jpg", "image/jpeg", "spineData".getBytes()
+        );
+        MockMultipartFile additional1 = new MockMultipartFile(
+                "additional1", "add1.jpg", "image/jpeg", "addData1".getBytes()
+        );
+        MockMultipartFile additional2 = new MockMultipartFile(
+                "additional2", "add2.jpg", "image/jpeg", "addData2".getBytes()
+        );
 
-        Book savedBook = bookService.saveBook(book, cover, null, null);
+        Book savedBook = bookService.saveBook(book, cover, spine, List.of(additional1, additional2));
 
-        assertNotNull(savedBook.getId());
+        assertNotNull(savedBook.getId(), "Book ID should be assigned");
         assertEquals("Integration Test Book", savedBook.getTitle());
-        assertEquals(java.util.Base64.getEncoder().encodeToString("coverData".getBytes()),
-                savedBook.getCoverImage());
 
+        // Cover & Spine
+        assertEquals(java.util.Base64.getEncoder().encodeToString("coverData".getBytes()), savedBook.getCoverImage());
+        assertEquals(java.util.Base64.getEncoder().encodeToString("spineData".getBytes()), savedBook.getSpineImage());
+
+        // Additional Images
+        List<String> additionalImages = savedBook.getAdditionalImages();
+        assertNotNull(additionalImages);
+        assertEquals(2, additionalImages.size());
+        assertEquals(java.util.Base64.getEncoder().encodeToString("addData1".getBytes()), additionalImages.get(0));
+        assertEquals(java.util.Base64.getEncoder().encodeToString("addData2".getBytes()), additionalImages.get(1));
+
+        // Prüfen, ob in DB gespeichert
         Optional<Book> fromDb = bookRepository.findById(savedBook.getId());
         assertTrue(fromDb.isPresent());
         assertEquals(savedBook.getTitle(), fromDb.get().getTitle());
-    }
-
-    @Test
-    void saveBook_withAllImages_shouldSaveAndReturnBook() throws IOException {
-        Book book = new Book();
-        book.setTitle("Full Image Book");
-
-        MockMultipartFile cover = new MockMultipartFile("coverImage","cover.jpg","image/jpeg","cover".getBytes());
-        MockMultipartFile spine = new MockMultipartFile("spineImage","spine.jpg","image/jpeg","spine".getBytes());
-        MockMultipartFile add1 = new MockMultipartFile("additional","add1.jpg","image/jpeg","add1".getBytes());
-        MockMultipartFile add2 = new MockMultipartFile("additional","add2.jpg","image/jpeg","add2".getBytes());
-
-        Book savedBook = bookService.saveBook(book, cover, spine, List.of(add1, add2));
-
-        assertNotNull(savedBook.getId());
-        assertEquals(2, savedBook.getAdditionalImages().size());
-        assertEquals(java.util.Base64.getEncoder().encodeToString("spine".getBytes()),
-                savedBook.getSpineImage());
     }
 
     @Test
