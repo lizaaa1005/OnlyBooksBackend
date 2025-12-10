@@ -1,184 +1,97 @@
 package bs.lf10.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor // Behalten wir, da Lombok einen leeren Konstruktor bereitstellt
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String author;
-//    private boolean sale;
+    private boolean available;
+
     private boolean swap;
     private String price;
-//    private boolean ageRestriction;
     private String language;
     private String genre;
-    @Column(name = "bookCondition")
     private String condition;
     private String pages;
     private String year;
     private String publisher;
     private String isbn;
-    @Column(length = 5000)
-    private String description;
-//    private String tags;
+
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String coverImage;
+
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String spineImage;
+
+    @Lob
+    private String description;
+
     @ElementCollection
     @CollectionTable(name = "book_additional_images", joinColumns = @JoinColumn(name = "book_id"))
     @Column(name = "image", columnDefinition = "LONGTEXT")
     private List<String> additionalImages;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public boolean isSwap() {
-        return swap;
-    }
-
-    public void setSwap(boolean swap) {
-        this.swap = swap;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getPages() {
-        return pages;
-    }
-
-    public void setPages(String pages) {
-        this.pages = pages;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCoverImage() {
-        return coverImage;
-    }
-
-    public void setCoverImage(String coverImage) {
-        this.coverImage = coverImage;
-    }
-
-    public String getSpineImage() {
-        return spineImage;
-    }
-
-    public void setSpineImage(String spineImage) {
-        this.spineImage = spineImage;
-    }
-
-    public List<String> getAdditionalImages() {
-        return additionalImages;
-    }
-
-    public void setAdditionalImages(List<String> additionalImages) {
-        this.additionalImages = additionalImages;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    // Manueller Konstruktor ersetzt @AllArgsConstructor, um EI_EXPOSE_REP2 zu vermeiden
+    public Book(Long id, String title, String author, boolean available, boolean swap, String price, String language,
+                String genre, String condition, String pages, String year, String publisher, String isbn,
+                String coverImage, String spineImage, String description, List<String> additionalImages, User owner) {
         this.id = id;
+        this.title = title;
+        this.author = author;
+        this.available = available;
+        this.swap = swap;
+        this.price = price;
+        this.language = language;
+        this.genre = genre;
+        this.condition = condition;
+        this.pages = pages;
+        this.year = year;
+        this.publisher = publisher;
+        this.isbn = isbn;
+        this.coverImage = coverImage;
+        this.spineImage = spineImage;
+        this.description = description;
+        // Defensive Kopie für Listen
+        this.additionalImages = (additionalImages == null) ? null : new ArrayList<>(additionalImages);
+        // Defensive Kopie für das User-Objekt (nutzt den User-Kopierkonstruktor von vorhin)
+        this.owner = (owner == null) ? null : new User(owner);
+    }
+
+    // Defensive copy für additionalImages Getter
+    public List<String> getAdditionalImages() {
+        return additionalImages == null ? null : new ArrayList<>(additionalImages);
+    }
+
+    // Defensive copy für additionalImages Setter
+    public void setAdditionalImages(List<String> additionalImages) {
+        this.additionalImages = additionalImages == null ? null : new ArrayList<>(additionalImages);
+    }
+
+    // Defensive copy für owner Getter
+    public User getOwner() {
+        return owner == null ? null : new User(owner);
+    }
+
+    // Defensive copy für owner Setter
+    public void setOwner(User owner) {
+        this.owner = owner == null ? null : new User(owner);
     }
 }
