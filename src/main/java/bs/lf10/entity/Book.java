@@ -20,6 +20,16 @@ public class Book {
     private String author;
     private boolean available;
 
+    private boolean swap;
+    private String price;
+    private String language;
+    private String genre;
+    private String condition;
+    private String pages;
+    private String year;
+    private String publisher;
+    private String isbn;
+
     @Lob
     private String description;
 
@@ -48,16 +58,5 @@ public class Book {
 
     public void setOwner(User owner) {
         this.owner = owner == null ? null : new User(owner);
-    }
-
-    // Optional: Konstruktor ohne additionalImages und owner
-    public Book(Long id, String title, String author, boolean available, String description) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.available = available;
-        this.description = description;
-        this.additionalImages = null;
-        this.owner = null;
     }
 }
