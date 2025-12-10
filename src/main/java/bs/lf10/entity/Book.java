@@ -17,10 +17,8 @@ public class Book {
     private Long id;
     private String title;
     private String author;
-//    private boolean sale;
     private boolean swap;
     private String price;
-//    private boolean ageRestriction;
     private String language;
     private String genre;
     @Column(name = "bookCondition")
@@ -31,7 +29,6 @@ public class Book {
     private String isbn;
     @Column(length = 5000)
     private String description;
-//    private String tags;
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String coverImage;

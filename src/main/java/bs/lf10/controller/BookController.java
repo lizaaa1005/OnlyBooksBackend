@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
-//@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 
@@ -23,7 +22,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> uploadBook(
+    public ResponseEntity<Book> uploadSingleBook(
             @RequestParam String title,
             @RequestParam String author,
             @RequestParam boolean sale,
@@ -38,7 +37,6 @@ public class BookController {
             @RequestParam String publisher,
             @RequestParam String isbn,
             @RequestParam String description,
-//            @RequestParam String tags,
             @RequestParam(required = false) MultipartFile coverImage,
             @RequestParam(required = false) MultipartFile spineImage,
             @RequestParam(required = false) List<MultipartFile> additionalImages
@@ -46,10 +44,8 @@ public class BookController {
         Book book = new Book();
         book.setTitle(title);
         book.setAuthor(author);
-//        book.setSale(sale);
         book.setSwap(swap);
         book.setPrice(price);
-//        book.setAgeRestriction(ageRestriction);
         book.setLanguage(language);
         book.setGenre(genre);
         book.setCondition(condition);
@@ -58,7 +54,7 @@ public class BookController {
         book.setPublisher(publisher);
         book.setIsbn(isbn);
         book.setDescription(description);
-//        book.setTags(tags);
+
         Book savedBook = bookService.saveBook(book, coverImage, spineImage, additionalImages);
         return ResponseEntity.ok(savedBook);
     }
