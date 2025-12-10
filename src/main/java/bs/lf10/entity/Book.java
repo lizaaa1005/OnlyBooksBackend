@@ -1,3 +1,13 @@
+package bs.lf10.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -29,13 +39,12 @@ public class Book {
     @ElementCollection
     @CollectionTable(name = "book_additional_images", joinColumns = @JoinColumn(name = "book_id"))
     @Column(name = "image", columnDefinition = "LONGTEXT")
-    private List<String> additionalImages;
+    private List<String> additionalImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
 
-    // Defensive copy für zusätzliche Bilder
     public List<String> getAdditionalImages() {
         return additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
@@ -44,7 +53,6 @@ public class Book {
         this.additionalImages = additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
 
-    // Defensive copy für Owner
     public User getOwner() {
         if (owner == null) return null;
         return new User(owner.getId(), owner.getUsername(), owner.getPassword(), null);
