@@ -1,17 +1,17 @@
 package bs.lf10.entity;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,34 +45,15 @@ public class Book {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    // ----------------- Konstruktor mit defensiven Kopien -----------------
-    public Book(Long id, String title, String author, boolean swap, String price, String language,
-                String genre, String condition, String pages, String year, String publisher,
-                String isbn, String description, String coverImage, String spineImage,
-                List<String> additionalImages, User owner) {
+    // ----------------- Getter / Setter -----------------
 
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.swap = swap;
-        this.price = price;
-        this.language = language;
-        this.genre = genre;
-        this.condition = condition;
-        this.pages = pages;
-        this.year = year;
-        this.publisher = publisher;
-        this.isbn = isbn;
-        this.description = description;
-        this.coverImage = coverImage;
-        this.spineImage = spineImage;
-        this.additionalImages = additionalImages == null ? null : new ArrayList<>(additionalImages);
-        this.owner = owner; // optional: defensive copy falls User mutable ist
+    public Long getId() {
+        return id;
     }
 
-    // ----------------- Getter / Setter -----------------
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -116,6 +97,7 @@ public class Book {
     public String getSpineImage() { return spineImage; }
     public void setSpineImage(String spineImage) { this.spineImage = spineImage; }
 
+    // Defensive copies für mutable Felder
     public List<String> getAdditionalImages() {
         return additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
