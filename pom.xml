@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="maven.apache.org"
+         xmlns:xsi="www.w3.org"
+         xsi:schemaLocation="maven.apache.org
+         maven.apache.org">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -116,7 +116,7 @@
                 </configuration>
             </plugin>
 
-            <!-- SpotBugs -->
+            <!-- SpotBugs (JETZT MIT FILTER-KONFIGURATION) -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
@@ -129,6 +129,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <!-- Verweis auf die neue Filterdatei -->
+                    <excludeFilterFile>src/main/resources/spotbugs-exclude-filter.xml</excludeFilterFile>
+                </configuration>
             </plugin>
 
             <!-- Surefire (Unit Tests) -->
