@@ -2,11 +2,13 @@ package bs.lf10.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
 

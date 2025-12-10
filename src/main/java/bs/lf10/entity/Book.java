@@ -2,11 +2,13 @@ package bs.lf10.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
 public class Book {
 
@@ -122,6 +124,11 @@ public class Book {
         this.additionalImages = additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
 
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
+    public User getOwner() {
+        return owner; // optional: defensive copy falls User mutable ist
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner; // optional: defensive copy falls User mutable ist
+    }
 }
