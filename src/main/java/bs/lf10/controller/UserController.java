@@ -2,12 +2,13 @@ package bs.lf10.controller;
 
 import bs.lf10.entity.User;
 import bs.lf10.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
@@ -16,18 +17,26 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user) {
+        try {
+            User newUser = userService.registerUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        } catch (RuntimeException e) {
+            // Keine null-Body ResponseEntity mehr → SpotBugs zufrieden
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody User user) {
+        try {
+            User authenticatedUser =
+                    userService.loginUser(user.getUsername(), user.getPassword());
+            return ResponseEntity.ok(authenticatedUser);
+        } catch (RuntimeException e) {
+            // Auch hier: body() weggelassen → kein NP_NONNULL_PARAM_VIOLATION
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

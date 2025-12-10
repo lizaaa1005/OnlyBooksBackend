@@ -20,23 +20,13 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
 
-    public List<Book> getBooks() {
-        return books == null ? null : new ArrayList<>(books);
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books == null ? null : new ArrayList<>(books);
-    }
-
-    // Copy constructor für defensive copy
-    public User(User user) {
-        if (user != null) {
-            this.id = user.getId();
-            this.username = user.getUsername();
-            this.password = user.getPassword();
-            this.books = user.getBooks() == null ? null : new ArrayList<>(user.getBooks());
-        }
+    // Copy-Konstruktor für defensive Kopien
+    public User(User other) {
+        this.id = other.id;
+        this.username = other.username;
+        this.password = other.password;
+        this.books = other.books == null ? null : new ArrayList<>(other.books);
     }
 }
