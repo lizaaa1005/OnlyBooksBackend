@@ -27,24 +27,4 @@ public class UserService {
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
-
-    public Optional<User> updateUser(Long id, User updatedUser) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setName(updatedUser.getName());
-                    user.setEmail(updatedUser.getEmail());
-                    user.setPassword(updatedUser.getPassword());
-                    // weitere Felder falls nötig
-                    return userRepository.save(user);
-                });
-    }
-
-    public boolean deleteUser(Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    userRepository.delete(user);
-                    return true;
-                })
-                .orElse(false);
-    }
 }

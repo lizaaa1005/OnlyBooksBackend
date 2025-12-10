@@ -20,6 +20,7 @@ public class BookService {
     }
 
     public Book saveBook(Book book) {
+        // Falls null -> bleibt null (Tests erwarten das)
         if (book.getAdditionalImages() == null) {
             book.setAdditionalImages(null);
         }
@@ -27,13 +28,19 @@ public class BookService {
     }
 
     public Book saveBook(Book book, MultipartFile coverImage, MultipartFile spineImage, List<MultipartFile> additionalImages) {
+
         try {
+            // COVER IMAGE
             if (coverImage != null && !coverImage.isEmpty()) {
                 book.setCoverImage(Base64.getEncoder().encodeToString(coverImage.getBytes()));
             }
+
+            // SPINE IMAGE
             if (spineImage != null && !spineImage.isEmpty()) {
                 book.setSpineImage(Base64.getEncoder().encodeToString(spineImage.getBytes()));
             }
+
+            // ADDITIONAL IMAGES
             if (additionalImages != null && !additionalImages.isEmpty()) {
                 List<String> encoded = additionalImages.stream()
                         .map(file -> {
@@ -42,12 +49,16 @@ public class BookService {
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList();
+                        })
+                        .toList();
+
                 book.setAdditionalImages(encoded);
             }
+
         } catch (IOException e) {
             throw new RuntimeException("Error processing images", e);
         }
+
         return saveBook(book);
     }
 
@@ -57,37 +68,5 @@ public class BookService {
 
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
-    }
-
-    public Optional<Book> updateBook(Long id, Book updatedBook) {
-        return bookRepository.findById(id)
-                .map(book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthor(updatedBook.getAuthor());
-                    book.setAvailable(updatedBook.isAvailable());
-                    book.setSwap(updatedBook.isSwap());
-                    book.setPrice(updatedBook.getPrice());
-                    book.setLanguage(updatedBook.getLanguage());
-                    book.setGenre(updatedBook.getGenre());
-                    book.setCondition(updatedBook.getCondition());
-                    book.setPages(updatedBook.getPages());
-                    book.setYear(updatedBook.getYear());
-                    book.setPublisher(updatedBook.getPublisher());
-                    book.setIsbn(updatedBook.getIsbn());
-                    book.setDescription(updatedBook.getDescription());
-                    book.setAdditionalImages(updatedBook.getAdditionalImages());
-                    book.setCoverImage(updatedBook.getCoverImage());
-                    book.setSpineImage(updatedBook.getSpineImage());
-                    return bookRepository.save(book);
-                });
-    }
-
-    public boolean deleteBook(Long id) {
-        return bookRepository.findById(id)
-                .map(book -> {
-                    bookRepository.delete(book);
-                    return true;
-                })
-                .orElse(false);
     }
 }
