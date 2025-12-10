@@ -30,6 +30,7 @@ public class Book {
     private String publisher;
     private String isbn;
 
+    // Added for tests (cover + spine image)
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String coverImage;
@@ -50,7 +51,7 @@ public class Book {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    // Defensive copy für additionalImages
+    // Defensive copy for additionalImages
     public List<String> getAdditionalImages() {
         return additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
@@ -59,7 +60,7 @@ public class Book {
         this.additionalImages = additionalImages == null ? null : new ArrayList<>(additionalImages);
     }
 
-    // Defensive copy für owner
+    // Defensive copy for owner
     public User getOwner() {
         return owner == null ? null : new User(owner);
     }

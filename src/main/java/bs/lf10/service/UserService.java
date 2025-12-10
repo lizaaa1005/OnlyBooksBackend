@@ -31,9 +31,10 @@ public class UserService {
     public Optional<User> updateUser(Long id, User updatedUser) {
         return userRepository.findById(id)
                 .map(user -> {
-                    user.setUsername(updatedUser.getUsername());
+                    user.setName(updatedUser.getName());
                     user.setEmail(updatedUser.getEmail());
                     user.setPassword(updatedUser.getPassword());
+                    // weitere Felder falls nötig
                     return userRepository.save(user);
                 });
     }
