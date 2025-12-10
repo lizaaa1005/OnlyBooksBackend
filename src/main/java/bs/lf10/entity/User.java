@@ -1,13 +1,3 @@
-package bs.lf10.entity;
-
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -20,8 +10,9 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Book> books = new ArrayList<>();
+    private List<Book> books;
 
+    // Defensive copy für Bücher
     public List<Book> getBooks() {
         return books == null ? null : new ArrayList<>(books);
     }
